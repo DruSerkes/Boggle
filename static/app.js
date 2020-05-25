@@ -6,12 +6,10 @@ const $score = $('.score');
 const $timer = $('.timer');
 const $start = $('#start');
 
-// let currentScore = parseInt($score.val());
+let currentScore = 0;
 
 $start.on('click', function(e) {
 	e.preventDefault();
-
-	let currentScore = 0;
 
 	showGame();
 	$form.on('submit', handleSubmit);
@@ -30,7 +28,7 @@ const updateScore = (score) => {
 };
 
 const runTimer = () => {
-	let timeleft = 60;
+	let timeleft = 10;
 	let gameTimer = setInterval(function() {
 		if (timeleft <= 0) {
 			clearInterval(gameTimer);
@@ -74,17 +72,10 @@ async function handleSubmit(event) {
 	$guess.val('').focus();
 }
 
-async function gameOver(score) {
+async function gameOver() {
 	// send score as JSON to '/game-over'
-	const response = axios.post('/game-over', {
-		data : {
-			score
-		}
-	});
+	const response = await axios.post('/game-over', { score: currentScore });
 
-	// --> go over to app.py:
-	// update games played and check against current high score
-	//
 	// --> back over to app.js
 	// update DOM with response
 }

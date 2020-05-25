@@ -11,10 +11,12 @@
     <hr>
 
     <div class="info">
-        <p>Score: <span class='score'>0</span></p>
-        <p>Timer: <span class="timer">60</span></p>
+        <h3>High Score: {{ highscore }}</h3>
+        <h3>Games Played: {{ games_played }}</h3>
+        <!-- <p>Score: <span class='score'>0</span></p>
+        <p>Timer: <span class="timer">60</span></p> -->
     </div>
-    
+
     <!-- Game section -->
     <section class="game-container hidden">
 
@@ -41,6 +43,12 @@
         <p class="message hidden"></p>
 
     </section>
+
+    <div class="info">
+        <p>Score: <span class='score'>0</span></p>
+        <p>Timer: <span class="timer">0</span> seconds</p>
+    </div>
+    
 
     <!-- start game  -->
         <button id='start'>Play New Game</button>

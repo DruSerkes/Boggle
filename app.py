@@ -14,7 +14,9 @@ boggle_game = Boggle()
 def make_game():
     board = boggle_game.make_board()
     session['board'] = board
-    return render_template('index.html', board=board)
+    games_played = session.get('games-played', 0)
+    highscore = session.get('high-score', 0)
+    return render_template('index.html', board=board, highscore=highscore, games_played=games_played)
 
 
 @app.route('/guess')
@@ -25,5 +27,15 @@ def check_guess():
     return jsonify({'result': response})
 
 
-# @app.route('/game-over', methods=["POST"])
-# def update_states():
+@app.route('/game-over', methods=["POST"])
+def update_stats():
+    # Update games played
+    games_played = session.get('games-played', 0)
+    session['games-played'] = games_played + 1
+
+    # Update high score
+    score = request.json['score']
+    highscore = session.get('high-score', 0)
+    session['high-score'] = max(highscore, score)
+
+    return jsonify(newRecord=score > highscore)
