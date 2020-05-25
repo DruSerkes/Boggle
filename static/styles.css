@@ -50,7 +50,8 @@ hr {
 	margin: 20px;
 }
 
-.info {
+.info,
+.more-info {
 	width: 100%;
 	display: flex;
 	justify-content: space-evenly;

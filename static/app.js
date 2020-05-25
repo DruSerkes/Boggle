@@ -5,12 +5,17 @@ const $message = $('.message');
 const $score = $('.score');
 const $timer = $('.timer');
 const $start = $('#start');
+const $moreInfo = $('.more-info');
+const $highscore = $('.highscore');
+const $gamesPlayed = $('.games-played');
+const $playAgain = $('.play-again');
 
 let currentScore = 0;
 
 $start.on('click', function(e) {
 	e.preventDefault();
 
+	currentScore = 0;
 	showGame();
 	$form.on('submit', handleSubmit);
 
@@ -76,18 +81,24 @@ async function gameOver() {
 	// send score as JSON to '/game-over'
 	const response = await axios.post('/game-over', { score: currentScore });
 
-	// --> back over to app.js
 	// update DOM with response
+	response.data.newRecord ? updateRecord() : displayMessage('Good Game - Try again!');
+}
+
+function updateRecord() {
+	$highscore.text(currentScore);
+	displayMessage('Congrats - You Got A New High Score!');
 }
 
 const showGame = () => {
-	$form.removeClass('hidden');
-	$message.removeClass('hidden');
 	$gameContainer.removeClass('hidden');
+	$start.addClass('hidden');
 };
 
 const hideGame = () => {
-	$form.addClass('hidden');
-	$message.addClass('hidden');
 	$gameContainer.addClass('hidden');
+	$playAgain.removeClass('hidden');
+	$playAgain.on('click', () => {
+		location.reload(); // this is not super optimal but it's where I'm stopping for now
+	});
 };
