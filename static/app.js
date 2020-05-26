@@ -11,40 +11,13 @@ const $gamesPlayed = $('.games-played');
 const $playAgain = $('.play-again');
 
 let currentScore = 0;
+let words = [];
 
-$start.on('click', function(e) {
-	e.preventDefault();
+$start.on('click', playGame);
 
-	currentScore = 0;
-	showGame();
-	$form.on('submit', handleSubmit);
-
-	runTimer();
+$playAgain.on('click', function() {
+	location.reload();
 });
-
-const displayMessage = (message) => {
-	$message.empty();
-	$message.text(message);
-};
-
-const updateScore = (score) => {
-	currentScore += score;
-	$score.text(`${currentScore}`);
-};
-
-const runTimer = () => {
-	let timeleft = 10;
-	let gameTimer = setInterval(function() {
-		if (timeleft <= 0) {
-			clearInterval(gameTimer);
-			$timer.text(timeleft);
-			hideGame();
-			gameOver();
-		}
-		$timer.text(timeleft);
-		timeleft -= 1;
-	}, 1000);
-};
 
 async function handleSubmit(event) {
 	event.preventDefault();
@@ -52,6 +25,12 @@ async function handleSubmit(event) {
 	// get value from input field
 	const word = $guess.val();
 	if (!word) return;
+
+	if (words.includes(word)) {
+		message = "You've already guessed that word";
+		displayMessage(message);
+		return;
+	}
 
 	// save the response
 	const response = await axios.get('/guess', {
@@ -68,13 +47,24 @@ async function handleSubmit(event) {
 	} else if (result === 'not-on-board') {
 		message = 'Sorry, that word is not on the board!';
 	} else {
+		words.push(word);
 		message = 'You got a word!';
 		let score = word.length;
 		updateScore(score);
 	}
 	displayMessage(message);
 
-	$guess.val('').focus();
+	// $guess.val('').focus();
+}
+
+async function playGame(e) {
+	e.preventDefault();
+
+	currentScore = 0;
+	showGame();
+	$form.on('submit', handleSubmit);
+
+	runTimer();
 }
 
 async function gameOver() {
@@ -85,6 +75,26 @@ async function gameOver() {
 	response.data.newRecord ? updateRecord() : displayMessage('Good Game - Try again!');
 }
 
+const displayMessage = (message) => {
+	$message.empty();
+	$message.text(message);
+	$guess.val('').focus();
+};
+
+const runTimer = () => {
+	let timeleft = 10;
+	let gameTimer = setInterval(function() {
+		if (timeleft <= 0) {
+			clearInterval(gameTimer);
+			$timer.text(timeleft);
+			hideGame();
+			gameOver();
+		}
+		$timer.text(timeleft);
+		timeleft -= 1;
+	}, 1000);
+};
+
 function updateRecord() {
 	$highscore.text(currentScore);
 	displayMessage('Congrats - You Got A New High Score!');
@@ -93,12 +103,17 @@ function updateRecord() {
 const showGame = () => {
 	$gameContainer.removeClass('hidden');
 	$start.addClass('hidden');
+	if (!$playAgain.hasClass('hidden')) {
+		$playAgain.addClass('hidden');
+	}
 };
 
 const hideGame = () => {
 	$gameContainer.addClass('hidden');
 	$playAgain.removeClass('hidden');
-	$playAgain.on('click', () => {
-		location.reload(); // this is not super optimal but it's where I'm stopping for now
-	});
+};
+
+const updateScore = (score) => {
+	currentScore += score;
+	$score.text(`${currentScore}`);
 };
