@@ -12,6 +12,16 @@ boggle_game = Boggle()
 
 @app.route('/')
 def make_game():
+    """
+    GET route to main page 
+
+    Creates a new boggle game
+
+    Saves the new gameboard in the session
+
+    Renders an HTML template with the board, updated highscore and games_played variables
+    """
+
     board = boggle_game.make_board()
     session['board'] = board
     games_played = session.get('games-played', 0)
@@ -21,6 +31,12 @@ def make_game():
 
 @app.route('/guess')
 def check_guess():
+    """
+    GET route that checks if the guessed word is valid
+
+    Returns string 'ok', 'not-word', or 'not-on-board' 
+    """
+
     board = session['board']
     guess = request.args['guess']
     response = boggle_game.check_valid_word(board, guess)
@@ -29,6 +45,14 @@ def check_guess():
 
 @app.route('/game-over', methods=["POST"])
 def update_stats():
+    """
+    POST route expecting a json 'score'
+
+    Updates the number of games played and the high score 
+
+    Returns a boolean for whether or not a new high score was set 
+    """
+
     # Update games played
     games_played = session.get('games-played', 0)
     session['games-played'] = games_played + 1
