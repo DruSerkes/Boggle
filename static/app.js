@@ -10,9 +10,6 @@ const $highscore = $('.highscore');
 const $gamesPlayed = $('.games-played');
 const $playAgain = $('.play-again');
 
-// let currentScore = 0;
-// let words = [];
-
 class BoggleGame {
 	constructor() {
 		this.score = 0;
@@ -62,6 +59,10 @@ class BoggleGame {
 		$guess.val('').focus();
 	}
 
+	updateGamesPlayed(played) {
+		$gamesPlayed.text(played);
+	}
+
 	async gameOver() {
 		// send score as JSON to '/game-over'
 		const response = await axios.post('/game-over', { score: this.score });
@@ -70,6 +71,9 @@ class BoggleGame {
 		response.data.newRecord
 			? this.updateRecord()
 			: this.displayMessage('Good Game - Try again!');
+
+		let played = response.data.gamesPlayed;
+		this.updateGamesPlayed(played);
 	}
 
 	async playGame(e) {

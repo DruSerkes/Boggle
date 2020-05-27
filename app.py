@@ -62,4 +62,4 @@ def update_stats():
     highscore = session.get('high-score', 0)
     session['high-score'] = max(highscore, score)
 
-    return jsonify(newRecord=score > highscore)
+    return jsonify(newRecord=score > highscore, gamesPlayed=games_played+1)
